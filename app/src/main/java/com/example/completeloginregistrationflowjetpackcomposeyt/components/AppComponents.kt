@@ -2,12 +2,15 @@ package com.example.completeloginregistrationflowjetpackcomposeyt.components
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,13 +18,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -34,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -351,9 +359,21 @@ fun ClickableLoginTextComponent(onTextSelected: (String) -> Unit) {
     })
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GoogleButtonComponent() {
+
+
+    Surface(modifier = Modifier.width(60.dp).height(60.dp).border(width = 1.dp, color = Color.LightGray).clip(shape = ShapeDefaults.Large),onClick = { /*TODO*/ }, color = Color.Transparent, shape = RoundedCornerShape(5.dp)) {
+        Box (modifier = Modifier.width(30.dp).height(30.dp)){
+            Icon(painter = painterResource(id = R.drawable.google_color_icon), contentDescription = "google", tint = Color.Unspecified)
+        }
+    }
+}
+
 @Preview
 @Composable
-fun ButtonComponentPreview(){
-    ButtonComponent(value= "button")
+fun GoogleButtonComponentPreview(){
+    GoogleButtonComponent()
 }
 
