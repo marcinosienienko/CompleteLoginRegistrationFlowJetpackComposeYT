@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -284,6 +286,69 @@ fun ButtonComponent(value: String) {
                 )
         }
     }
+}
+
+@Composable
+fun DividerTextComponent() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically)
+    {
+        Divider(modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f),
+            color = Color.Gray,
+            thickness = 1.dp)
+
+        Text(modifier = Modifier.padding(8.dp),
+            text = stringResource(R.string.or),
+            fontSize = 18.sp, color = Color.Black)
+
+        Divider(modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f),
+            color = Color.Gray,
+            thickness = 1.dp)
+    }
+}
+
+@Composable
+fun ClickableLoginTextComponent(onTextSelected: (String) -> Unit) {
+
+    val initialText = stringResource(R.string.already_have_an_account)
+    val loginText = stringResource(R.string.login)
+
+    val annotatedString = buildAnnotatedString {
+
+        append(initialText)
+        withStyle(SpanStyle(color = Color.DarkGray)){
+            pushStringAnnotation(tag = loginText, annotation = loginText)
+            append(loginText)
+        }
+        
+        
+    }
+    ClickableText(modifier = Modifier
+        .fillMaxWidth()
+        .heightIn(min = 40.dp),
+        style = TextStyle(
+            fontSize = 21.sp,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal,
+            textAlign = TextAlign.Center
+        ),
+       text = annotatedString, onClick = { offset ->
+
+        annotatedString.getStringAnnotations(offset ,offset)
+            .firstOrNull()?.also { span ->
+                Log.d("ClickableTextComponent", "{${span.item}}")
+
+                if (span.item == loginText) {
+                    onTextSelected(span.item)
+                }
+            }
+
+    })
 }
 
 @Preview

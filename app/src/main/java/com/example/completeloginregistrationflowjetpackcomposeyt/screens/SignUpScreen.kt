@@ -17,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.example.completeloginregistrationflowjetpackcomposeyt.R
 import com.example.completeloginregistrationflowjetpackcomposeyt.components.ButtonComponent
 import com.example.completeloginregistrationflowjetpackcomposeyt.components.CheckBoxComponent
+import com.example.completeloginregistrationflowjetpackcomposeyt.components.ClickableLoginTextComponent
+import com.example.completeloginregistrationflowjetpackcomposeyt.components.DividerTextComponent
 import com.example.completeloginregistrationflowjetpackcomposeyt.components.HeadingTextComponent
 import com.example.completeloginregistrationflowjetpackcomposeyt.components.NormalTextComponent
 import com.example.completeloginregistrationflowjetpackcomposeyt.components.PasswordTextFieldComponent
@@ -64,7 +66,14 @@ fun SignUpScreen() {
                 onTextSelected = {
                     PostOfficeAppRouter.navigateTo(Screen.TermsAndConditionsScreen)
                 })
+            Spacer(modifier = Modifier.height(40.dp))
             ButtonComponent(value = stringResource(R.string.register))
+            Spacer(modifier = Modifier.height(20.dp))
+            DividerTextComponent()
+            
+            ClickableLoginTextComponent(onTextSelected = {
+
+            })
         }
 
     }
