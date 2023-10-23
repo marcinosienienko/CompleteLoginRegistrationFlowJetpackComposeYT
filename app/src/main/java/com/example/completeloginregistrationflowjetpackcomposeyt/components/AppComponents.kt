@@ -1,6 +1,9 @@
 package com.example.completeloginregistrationflowjetpackcomposeyt.components
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -10,6 +13,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
@@ -32,11 +38,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.completeloginregistrationflowjetpackcomposeyt.R
@@ -100,8 +108,12 @@ fun TextFieldComponent(labelValue: String, painterResource: Painter) {
             cursorColor = androidx.compose.ui.graphics.Color.DarkGray,
 
         ),
-        keyboardOptions = KeyboardOptions.Default,
-        value = textValue.value,
+
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Text
+        ),
+                value = textValue.value,
         onValueChange = {
             textValue.value = it
         },
@@ -242,5 +254,41 @@ fun ClickableTextComponent(value: String, onTextSelected : (String) -> Unit) {
 
     })
 
+}
+
+@Composable
+fun ButtonComponent(value: String) {
+    Button(
+        onClick = { /*TODO*/ },
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(48.dp),
+        contentPadding = PaddingValues(),
+        colors = ButtonDefaults.buttonColors(Color.Transparent)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(48.dp)
+                .background(
+                    brush = Brush.horizontalGradient(listOf(Color.Black, Color.Gray)),
+                    shape = RoundedCornerShape(50.dp)
+                ),
+            contentAlignment = Alignment.Center
+
+        ) {
+                Text(
+                    text = value,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ButtonComponentPreview(){
+    ButtonComponent(value= "button")
 }
 
