@@ -21,5 +21,6 @@
     <string name="already_have_an_account">"Already have an account? "</string>
     <string name="google_button">google button</string>
     <string name="sign_up_with_google">Sign Up with Google</string>
+    <string name="creating_account">Creating Account...</string>
 
 </resources>
