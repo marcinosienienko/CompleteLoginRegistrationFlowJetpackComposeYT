@@ -1,5 +1,6 @@
 package com.example.completeloginregistrationflowjetpackcomposeyt.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,8 +40,6 @@ fun SignUpScreen() {
             .background(Color.White)
             .padding(28.dp),
         color = Color.White
-
-
     ) {
         Column(
             modifier = Modifier
@@ -66,22 +65,31 @@ fun SignUpScreen() {
             Spacer(modifier = Modifier.height(20.dp))
             PasswordTextFieldComponent(
                 labelValue = stringResource(R.string.password),
-                painterResource = painterResource(id = R.drawable.outline_lock_24
-            ))
+                painterResource = painterResource(id = R.drawable.outline_lock_24))
             CheckBoxComponent(value = stringResource(id = R.string.terms_and_conditions),
                 onTextSelected = {
                     PostOfficeAppRouter.navigateTo(Screen.TermsAndConditionsScreen)
                 })
             Spacer(modifier = Modifier.height(40.dp))
-            ButtonComponent(defaultText = stringResource(R.string.register))
+            ButtonComponent (
+                defaultText = stringResource(id = R.string.register),
+                loadingText = stringResource(id = R.string.creating_account),
+                onClicked = {
+                    Log.d("buttonRegister", "Clicked")
+                }
+            )
             Spacer(modifier = Modifier.height(20.dp))
-            GoogleButtonComponent{
-
-            }
+            GoogleButtonComponent(
+                defaultText = stringResource(id = R.string.register),
+                loadingText = stringResource(id = R.string.creating_account),
+                onClicked = {
+                    Log.d("googleButton","Clicked")
+                }
+            )
             DividerTextComponent()
             
             ClickableLoginTextComponent(onTextSelected = {
-
+                PostOfficeAppRouter.navigateTo(Screen.SignInScreen)
             })
         }
 

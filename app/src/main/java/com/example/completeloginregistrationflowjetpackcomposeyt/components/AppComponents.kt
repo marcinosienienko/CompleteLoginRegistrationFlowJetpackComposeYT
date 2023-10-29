@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,17 +35,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -62,9 +61,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
 import com.example.completeloginregistrationflowjetpackcomposeyt.R
 import com.example.completeloginregistrationflowjetpackcomposeyt.ui.theme.Shapes
 
@@ -87,8 +83,6 @@ fun NormalTextComponent(value: String) {
 
 @Composable
 fun HeadingTextComponent(value: String) {
-
-
     Text(
         text = value,
         modifier = Modifier
@@ -116,30 +110,30 @@ fun TextFieldComponent(labelValue: String, painterResource: Painter) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(4.dp)),
-        label = {Text(text = labelValue)},
-
+        label = {Text(
+            text = labelValue)
+                },
         colors = TextFieldDefaults.textFieldColors(
-
             containerColor = androidx.compose.ui.graphics.Color.White,
             focusedIndicatorColor = androidx.compose.ui.graphics.Color.DarkGray,
             unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.LightGray,
             focusedLabelColor = androidx.compose.ui.graphics.Color.DarkGray,
             cursorColor = androidx.compose.ui.graphics.Color.DarkGray,
-
         ),
-
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done,
             keyboardType = KeyboardType.Text
         ),
-                value = textValue.value,
+        value = textValue.value,
         onValueChange = {
             textValue.value = it
         },
         maxLines = 1,
         singleLine = true,
         leadingIcon = {
-            Icon(painter = painterResource, contentDescription = "" )
+            Icon(
+                painter = painterResource,
+                contentDescription = "" )
         }
     )
 }
@@ -148,33 +142,35 @@ fun TextFieldComponent(labelValue: String, painterResource: Painter) {
 @Composable
 fun PasswordTextFieldComponent(labelValue: String, painterResource: Painter) {
 
-    val password = remember {
+//    val password = remember {
+//        mutableStateOf("")
+//    }
+    var password by rememberSaveable {
         mutableStateOf("")
     }
-
-    val passwordVisible = remember {
+    var passwordVisible by rememberSaveable {
         mutableStateOf(false)
     }
 
-    TextField(
+    OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(4.dp)),
         label = {Text(text = labelValue)},
-
+        placeholder = {Text(text = "Password")},
         colors = TextFieldDefaults.textFieldColors(
 
-            containerColor = androidx.compose.ui.graphics.Color.LightGray,
-            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
-            focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+            containerColor = androidx.compose.ui.graphics.Color.White,
+            focusedIndicatorColor = androidx.compose.ui.graphics.Color.DarkGray,
+            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.LightGray,
             focusedLabelColor = androidx.compose.ui.graphics.Color.DarkGray,
             cursorColor = androidx.compose.ui.graphics.Color.DarkGray,
 
             ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        value = password.value,
+        value = password,
         onValueChange = {
-            password.value = it
+            password = it
         },
         maxLines = 1,
         leadingIcon = {
@@ -185,19 +181,20 @@ fun PasswordTextFieldComponent(labelValue: String, painterResource: Painter) {
         },
         trailingIcon = {
 
-            val iconImage = if(passwordVisible.value)  {
+            val iconImage =
+                if(passwordVisible)  {
                 Icons.Filled.Visibility
             } else {
                 Icons.Filled.VisibilityOff
             }
 
-            val description = if(passwordVisible.value) {
+            val description = if(passwordVisible) {
                 stringResource(R.string.hide_password)
             } else {
                 stringResource(R.string.show_password)
             }
             
-            IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
+            IconButton(onClick = { passwordVisible = !passwordVisible }) {
                 Icon(
                     imageVector = iconImage,
                     contentDescription = description
@@ -205,7 +202,7 @@ fun PasswordTextFieldComponent(labelValue: String, painterResource: Painter) {
             }
             
         },
-        visualTransformation = if (passwordVisible.value) VisualTransformation.None else
+        visualTransformation = if (passwordVisible) VisualTransformation.None else
                 PasswordVisualTransformation()
 
     )
@@ -220,14 +217,14 @@ fun CheckBoxComponent(value: String, onTextSelected: (String) -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         ) {
 
-        val checkedState = remember {
+        var checkedState by rememberSaveable {
             mutableStateOf(false)
         }
 
         Checkbox(
-            checked = checkedState.value,
+            checked = checkedState,
             onCheckedChange = {
-            checkedState.value = !checkedState.value
+            checkedState = !checkedState
         })
         
         ClickableTextComponent(value = value, onTextSelected)
@@ -273,70 +270,6 @@ fun ClickableTextComponent(value: String, onTextSelected : (String) -> Unit) {
 
     })
 
-}
-
-@Composable
-fun ButtonComponent(
-    colors: ButtonColors = ButtonDefaults.buttonColors(Color.Transparent),
-    shape: CornerBasedShape = Shapes.medium,
-    fontWeight: FontWeight = FontWeight.Bold,
-    defaultText: String = stringResource(id = R.string.register),
-    loadingText: String = stringResource(id = R.string.creating_account),
-    progressIndicator: Color = MaterialTheme.colorScheme.surface
-) {
-
-    var clicked by remember { mutableStateOf(false) }
-
-    Button(
-        onClick = {clicked = !clicked},
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(48.dp),
-        shape = shape,
-        contentPadding = PaddingValues(),
-        colors = colors
-
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(48.dp)
-                .background(
-                    brush = Brush.horizontalGradient(listOf(Color.Black, Color.Gray)),
-                    shape = Shapes.medium
-                )
-                .animateContentSize(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                        easing = LinearOutSlowInEasing
-                    )
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-
-        )
-        { if (!clicked) {
-                Text(
-                    text = defaultText,
-                    fontSize = 18.sp,
-                    fontWeight = fontWeight)
-        } else {
-                Text (
-                    text = loadingText,
-                    fontSize = 18.sp,
-                    fontWeight = fontWeight)
-                Spacer(modifier = Modifier.width(8.dp))
-                CircularProgressIndicator(
-                modifier = Modifier
-                    .width(16.dp)
-                    .height(16.dp),
-                strokeWidth = 2.dp,
-                color = progressIndicator
-
-            )
-        }
-        }
-    }
 }
 
 @Composable
@@ -402,6 +335,74 @@ fun ClickableLoginTextComponent(onTextSelected: (String) -> Unit) {
     })
 }
 
+@Composable
+fun ButtonComponent(
+    colors: ButtonColors = ButtonDefaults.buttonColors(Color.Transparent),
+    shape: CornerBasedShape = Shapes.medium,
+    fontWeight: FontWeight = FontWeight.Bold,
+    defaultText: String = stringResource(id = R.string.register),
+    loadingText: String = stringResource(id = R.string.creating_account),
+    progressIndicator: Color = MaterialTheme.colorScheme.surface,
+    onClicked: () -> Unit
+) {
+
+    var clicked by remember { mutableStateOf(false) }
+
+    Button(
+        onClick = {clicked = !clicked},
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(48.dp),
+        shape = shape,
+        contentPadding = PaddingValues(),
+        colors = colors
+
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(48.dp)
+                .background(
+                    brush = Brush.horizontalGradient(listOf(Color.Black, Color.Gray)),
+                    shape = Shapes.medium
+                )
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+
+
+            )
+        { if (!clicked) {
+            Text(
+                text = defaultText,
+                fontSize = 18.sp,
+                fontWeight = fontWeight)
+        } else {
+            Text (
+                text = loadingText,
+                fontSize = 18.sp,
+                fontWeight = fontWeight,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .width(16.dp)
+                    .height(16.dp),
+                strokeWidth = 2.dp,
+                color = progressIndicator
+            )
+            onClicked()
+        }
+        }
+    }
+
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoogleButtonComponent(
@@ -409,6 +410,7 @@ fun GoogleButtonComponent(
     loadingText : String = stringResource(R.string.creating_account),
     icon : Painter = painterResource(id = R.drawable.ic_google_logo),
     shape : Shape = Shapes.medium,
+    fontWeight: FontWeight = FontWeight.Bold,
     borderColor : Color = Color.LightGray,
     backgroundColor : Color = MaterialTheme.colorScheme.surface,
     progressIndicator: Color = MaterialTheme.colorScheme.primary,
@@ -448,9 +450,9 @@ fun GoogleButtonComponent(
             Spacer(modifier = Modifier.width(8.dp))
 
             if (!clicked) {
-                Text(text = defaultText)
+                Text(text = defaultText, fontWeight = fontWeight, fontSize = 18.sp)
             } else {
-                Text(text = loadingText)
+                Text(text = loadingText, fontWeight = fontWeight, fontSize = 18.sp)
                 Spacer(modifier = Modifier.width(16.dp))
                 CircularProgressIndicator(
                     modifier = Modifier
@@ -465,13 +467,28 @@ fun GoogleButtonComponent(
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
+
+@Preview
+@Composable
+fun ButtonComponentPreview() {
+    ButtonComponent (
+        defaultText = stringResource(id = R.string.register),
+        loadingText = stringResource(id = R.string.creating_account),
+        onClicked = {
+            Log.d("buttonRegister", "Clicked")
+        }
+    )
+}
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun GoogleButtonComponentPreview(){
     GoogleButtonComponent(
-        defaultText = "Sign Up with Google",
-        loadingText = "Creating Account",
-        onClicked = {}
+        defaultText = stringResource(id = R.string.sign_up_with_google),
+        loadingText = stringResource(id = R.string.creating_account),
+        onClicked = {
+            Log.d("googleButton","Clicked")
+        }
     )
 }
 
