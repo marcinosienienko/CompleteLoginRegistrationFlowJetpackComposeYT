@@ -1,13 +1,22 @@
 package com.example.completeloginregistrationflowjetpackcomposeyt.components
 
 import android.util.Log
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,13 +24,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -49,7 +62,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import com.example.completeloginregistrationflowjetpackcomposeyt.R
+import com.example.completeloginregistrationflowjetpackcomposeyt.ui.theme.Shapes
 
 @Composable
 fun NormalTextComponent(value: String) {
@@ -259,31 +276,65 @@ fun ClickableTextComponent(value: String, onTextSelected : (String) -> Unit) {
 }
 
 @Composable
-fun ButtonComponent(value: String) {
+fun ButtonComponent(
+    colors: ButtonColors = ButtonDefaults.buttonColors(Color.Transparent),
+    shape: CornerBasedShape = Shapes.medium,
+    fontWeight: FontWeight = FontWeight.Bold,
+    defaultText: String = stringResource(id = R.string.register),
+    loadingText: String = stringResource(id = R.string.creating_account),
+    progressIndicator: Color = MaterialTheme.colorScheme.surface
+) {
+
+    var clicked by remember { mutableStateOf(false) }
+
     Button(
-        onClick = { /*TODO*/ },
+        onClick = {clicked = !clicked},
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp),
+        shape = shape,
         contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(Color.Transparent)
+        colors = colors
+
     ) {
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(48.dp)
                 .background(
                     brush = Brush.horizontalGradient(listOf(Color.Black, Color.Gray)),
-                    shape = RoundedCornerShape(50.dp)
-                ),
-            contentAlignment = Alignment.Center
-
-        ) {
-                Text(
-                    text = value,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    shape = Shapes.medium
                 )
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+
+        )
+        { if (!clicked) {
+                Text(
+                    text = defaultText,
+                    fontSize = 18.sp,
+                    fontWeight = fontWeight)
+        } else {
+                Text (
+                    text = loadingText,
+                    fontSize = 18.sp,
+                    fontWeight = fontWeight)
+                Spacer(modifier = Modifier.width(8.dp))
+                CircularProgressIndicator(
+                modifier = Modifier
+                    .width(16.dp)
+                    .height(16.dp),
+                strokeWidth = 2.dp,
+                color = progressIndicator
+
+            )
+        }
         }
     }
 }
@@ -351,9 +402,76 @@ fun ClickableLoginTextComponent(onTextSelected: (String) -> Unit) {
     })
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun GoogleButtonComponent(
+    defaultText : String = stringResource(id = R.string.sign_up_with_google),
+    loadingText : String = stringResource(R.string.creating_account),
+    icon : Painter = painterResource(id = R.drawable.ic_google_logo),
+    shape : Shape = Shapes.medium,
+    borderColor : Color = Color.LightGray,
+    backgroundColor : Color = MaterialTheme.colorScheme.surface,
+    progressIndicator: Color = MaterialTheme.colorScheme.primary,
+    onClicked: () -> Unit
+) {
+
+    var clicked by remember { mutableStateOf(false) }
+
+    Surface (
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {clicked = !clicked},
+        shape = shape,
+        border = BorderStroke(width = 1.dp, color = borderColor),
+        color = backgroundColor,
+    ) {
+        Row (
+            modifier = Modifier
+                .padding(
+                    start = 12.dp,
+                    end = 16.dp,
+                    top = 12.dp,
+                    bottom = 12.dp
+                )
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center){
+            Icon(
+                painter = icon,
+                    contentDescription = stringResource(R.string.google_button),
+                    tint = Color.Unspecified
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+
+            if (!clicked) {
+                Text(text = defaultText)
+            } else {
+                Text(text = loadingText)
+                Spacer(modifier = Modifier.width(16.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .width(16.dp)
+                        .height(16.dp),
+                    strokeWidth = 2.dp,
+                    color = progressIndicator
+                )
+                onClicked()
+            }
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun ButtonComponentPreview(){
-    ButtonComponent(value= "button")
+fun GoogleButtonComponentPreview(){
+    GoogleButtonComponent(
+        defaultText = "Sign Up with Google",
+        loadingText = "Creating Account",
+        onClicked = {}
+    )
 }
 
