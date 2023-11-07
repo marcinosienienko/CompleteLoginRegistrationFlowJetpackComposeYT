@@ -23,5 +23,10 @@
     <string name="sign_up_with_google">Sign Up with Google</string>
     <string name="creating_account">Creating Account...</string>
     <string name="welcome_back">Welcome Back</string>
+    <string name="forgot_your_password">Forgot your password?</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="sign_in_with_google">Sign In with google</string>
+    <string name="signing_with_google">Signing with google</string>
+    <string name="don_t_have_an_account_yet">"Don't have an account yet? "</string>
 
 </resources>

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -45,6 +46,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -57,6 +59,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -102,7 +105,7 @@ fun HeadingTextComponent(value: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TextFieldComponent(labelValue: String, painterResource: Painter) {
+fun TextFieldComponent(labelValue: String, painterResource: Painter, onTextSelected: (String) -> Unit) {
 
     val textValue = remember {mutableStateOf("")}
 
@@ -121,12 +124,13 @@ fun TextFieldComponent(labelValue: String, painterResource: Painter) {
             cursorColor = androidx.compose.ui.graphics.Color.DarkGray,
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Done,
+            imeAction = ImeAction.Next,
             keyboardType = KeyboardType.Text
         ),
         value = textValue.value,
         onValueChange = {
             textValue.value = it
+            onTextSelected(it)
         },
         maxLines = 1,
         singleLine = true,
@@ -140,11 +144,13 @@ fun TextFieldComponent(labelValue: String, painterResource: Painter) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PasswordTextFieldComponent(labelValue: String, painterResource: Painter) {
+fun PasswordTextFieldComponent(labelValue: String, painterResource: Painter, onTextSelected: (String) -> Unit) {
 
 //    val password = remember {
 //        mutableStateOf("")
 //    }
+
+    val localFocusManager = LocalFocusManager.current
     var password by rememberSaveable {
         mutableStateOf("")
     }
@@ -167,11 +173,16 @@ fun PasswordTextFieldComponent(labelValue: String, painterResource: Painter) {
             cursorColor = androidx.compose.ui.graphics.Color.DarkGray,
 
             ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions{
+            localFocusManager.clearFocus()
+        },
         value = password,
         onValueChange = {
             password = it
+            onTextSelected(it)
         },
+        singleLine = true,
         maxLines = 1,
         leadingIcon = {
             Icon(
@@ -297,10 +308,22 @@ fun DividerTextComponent() {
 }
 
 @Composable
-fun ClickableLoginTextComponent(onTextSelected: (String) -> Unit) {
+fun ClickableLoginTextComponent(tryingToLogin:Boolean = true, onTextSelected: (String) -> Unit) {
 
-    val initialText = stringResource(R.string.already_have_an_account)
-    val loginText = stringResource(R.string.login)
+    val initialText =
+
+        if (tryingToLogin)
+            stringResource(R.string.already_have_an_account)
+        else
+            stringResource(R.string.don_t_have_an_account_yet
+    )
+
+    val loginText =
+
+        if (tryingToLogin)
+            stringResource(R.string.login)
+        else
+            stringResource(id = R.string.register)
 
     val annotatedString = buildAnnotatedString {
 
@@ -336,6 +359,24 @@ fun ClickableLoginTextComponent(onTextSelected: (String) -> Unit) {
 }
 
 @Composable
+fun UnderLinedTextComponent(value: String) {
+    Text(
+        text = value,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(40.dp),
+        style = TextStyle(
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Normal
+        ),
+        color = Color.LightGray,
+        textAlign = TextAlign.Center,
+        textDecoration = TextDecoration.Underline,
+
+    )
+}
+@Composable
 fun ButtonComponent(
     colors: ButtonColors = ButtonDefaults.buttonColors(Color.Transparent),
     shape: CornerBasedShape = Shapes.medium,
@@ -343,13 +384,17 @@ fun ButtonComponent(
     defaultText: String = stringResource(id = R.string.register),
     loadingText: String = stringResource(id = R.string.creating_account),
     progressIndicator: Color = MaterialTheme.colorScheme.surface,
-    onClicked: () -> Unit
+//    onClicked: () -> Unit,
+    onButtonClicked: () -> Unit
 ) {
 
     var clicked by remember { mutableStateOf(false) }
 
     Button(
-        onClick = {clicked = !clicked},
+        onClick = {
+            clicked = !clicked
+            onButtonClicked.invoke()
+                  },
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp),
@@ -396,7 +441,7 @@ fun ButtonComponent(
                 strokeWidth = 2.dp,
                 color = progressIndicator
             )
-            onClicked()
+            //onClicked()
         }
         }
     }
@@ -474,7 +519,7 @@ fun ButtonComponentPreview() {
     ButtonComponent (
         defaultText = stringResource(id = R.string.register),
         loadingText = stringResource(id = R.string.creating_account),
-        onClicked = {
+        onButtonClicked = {
             Log.d("buttonRegister", "Clicked")
         }
     )
